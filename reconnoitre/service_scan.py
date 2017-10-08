@@ -26,12 +26,12 @@ def nmap_scan(ip_address, output_directory, dns_server, quick):
    if dns_server:
        print("[+] Starting detailed TCP/UDP nmap scans for %s using DNS Server %s" % (ip_address, dns_server))
        print("[+] Using DNS server %s" % (dns_server))
-       TCPSCAN = "nmap -vv -Pn -sS -A -sC -p- -T 3 -script-args=unsafe=1 --dns-servers %s -oN '%s/%s.nmap' -oX '%s/%s_nmap_scan_import.xml' %s"  % (dns_server, output_directory, ip_address, output_directory, ip_address, ip_address)
-       UDPSCAN = "nmap -vv -Pn -A -sC -sU -T 4 --top-ports 200 --max-retries 0 --dns-servers %s -oN '%s/%sU.nmap' -oX '%s/%sU_nmap_scan_import.xml' %s" % (dns_server, output_directory, ip_address, output_directory, ip_address, ip_address)
+       TCPSCAN = "nmap -vv -Pn -sS -A -sC --top-ports 1000 -T 4 --dns-servers %s -oN '%s/%s.nmap' -oX '%s/%s_nmap_scan_import.xml' %s"  % (dns_server, output_directory, ip_address, output_directory, ip_address, ip_address)
+       UDPSCAN = "nmap -vv -Pn -A -sC -sU -T 4 --top-ports 200 --max-retries 0 --dns-servers %s -oA '%s/%s-udp' %s" % (dns_server, output_directory, ip_address, ip_address)
    else:
        print("[+] Starting detailed TCP/UDP nmap scans for %s" % (ip_address))
-       TCPSCAN = "nmap -vv -Pn -sS -A -sC -p- -T 3 -script-args=unsafe=1 -n %s -oN '%s/%s.nmap' -oX '%s/%s_nmap_scan_import.xml' %s"  % (dns_server, output_directory, ip_address, output_directory, ip_address, ip_address)
-       UDPSCAN = "nmap -sC -sV -sU %s -oA %s/%s-udp" % (ip_address, output_directory, ip_address)
+       TCPSCAN = "nmap -vv -Pn -sS -A -sC --top-ports 1000 -T 4 -n %s -oN '%s/%s.nmap' -oX '%s/%s_nmap_scan_import.xml' %s"  % (dns_server, output_directory, ip_address, output_directory, ip_address, ip_address)
+       UDPSCAN = "nmap -vv -Pn -A -sC -sU -T 4 --top-ports 200 --max-retries 0 %s -oA '%s/%s-udp'" % (ip_address, output_directory, ip_address) 
 
    udpresults = subprocess.check_output(UDPSCAN, shell=True)
    tcpresults = subprocess.check_output(TCPSCAN, shell=True)
